@@ -11,6 +11,10 @@ func init() {
 
 func main() {
   var cfg = config.GetConfig()
-  var web = server.New(cfg)
+  web, err := server.New(cfg)
+  if err != nil {
+    panic(err)
+  }
   web.Start()
+  defer web.Stop()
 }
