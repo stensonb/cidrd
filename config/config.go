@@ -1,9 +1,9 @@
 package config
 
 type Config struct {
-  Port uint16
+	Port uint16
 }
 
 func GetConfig() *Config {
-  return &Config{Port: 8080}
+	return &Config{Port: 8080}
 }

@@ -1,4 +1,4 @@
-package class
+package netblock
 
 import (
 	"github.com/emicklei/go-restful"
@@ -7,13 +7,13 @@ import (
 	"github.com/stensonb/cidrd/model"
 )
 
-func (ce *classEndpoint) getAllClasses(req *restful.Request, res *restful.Response) {
+func (nbe *netblockEndpoint) getAllNetblocks(req *restful.Request, res *restful.Response) {
 	err := validateGetAllRequest(req)
 	if err != nil {
 		res.WriteError(http.StatusBadRequest, err)
 	}
 
-	ans, err := ce.Model.GetAllClasses()
+	ans, err := nbe.Model.GetAllNetblocks()
 	if err != nil {
 		res.WriteError(http.StatusNotFound, err)
 	} else {
@@ -25,7 +25,7 @@ func validateGetAllRequest(req *restful.Request) error {
 	return nil
 }
 
-func (ce *classEndpoint) getClass(req *restful.Request, res *restful.Response) {
+func (nbe *netblockEndpoint) getNetblock(req *restful.Request, res *restful.Response) {
 	err := validateGetRequest(req)
 	if err != nil {
 		//error, bad request
@@ -33,7 +33,7 @@ func (ce *classEndpoint) getClass(req *restful.Request, res *restful.Response) {
 		return
 	}
 
-	ans, err := ce.Model.GetClassByUUID(req.PathParameter(param_name))
+	ans, err := nbe.Model.GetNetblockByUUID(req.PathParameter(param_name))
 	if err != nil {
 		//error from model
 		res.WriteError(http.StatusNotFound, err)
@@ -48,27 +48,27 @@ func validateGetRequest(req *restful.Request) error {
 	return nil
 }
 
-func (ce *classEndpoint) updateClass(req *restful.Request, res *restful.Response) {
+func (nbe *netblockEndpoint) updateNetblock(req *restful.Request, res *restful.Response) {
 	err := validateUpdateRequest(req)
 	if err != nil {
 		res.WriteError(http.StatusBadRequest, err)
 		return
 	}
 
-	newclass := new(model.Class)
-	err = req.ReadEntity(newclass)
+	newnetblock := new(model.Netblock)
+	err = req.ReadEntity(newnetblock)
 	if err != nil {
 		res.WriteErrorString(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	filterClass(newclass)
+	filterNetblock(newnetblock)
 
-	newclass.Uuid = req.PathParameter(param_name)
+	newnetblock.Uuid = req.PathParameter(param_name)
 
-	ce.Model.StoreClass(newclass)
+	nbe.Model.StoreNetblock(newnetblock)
 	res.WriteHeader(http.StatusAccepted)
-	res.WriteEntity(newclass)
+	res.WriteEntity(newnetblock)
 }
 
 func validateUpdateRequest(res *restful.Request) error {
@@ -77,36 +77,40 @@ func validateUpdateRequest(res *restful.Request) error {
 	return nil
 }
 
-// this function removes data from the Class object
+// this function removes data from the Netblock object
 // before saving (fields which can never be set by
 // the user...uuid, created, modified...)
-func filterClass(c *model.Class) {
-	_newclass := new(model.Class)
-	c.Created = _newclass.Created
-	c.Modified = _newclass.Modified
-	c.Uuid = _newclass.Uuid
+func filterNetblock(n *model.Netblock) {
+	_newnetblock := new(model.Netblock)
+	n.Created = _newnetblock.Created
+	n.Modified = _newnetblock.Modified
+	n.Uuid = _newnetblock.Uuid
 }
 
-func (ce *classEndpoint) createClass(req *restful.Request, res *restful.Response) {
+func (nbe *netblockEndpoint) createNetblock(req *restful.Request, res *restful.Response) {
 	err := validateCreateRequest(req)
 	if err != nil {
 		res.WriteError(http.StatusBadRequest, err)
 		return
 	}
 
-	newclass := new(model.Class)
-	err = req.ReadEntity(newclass)
+	newnetblock := new(model.Netblock)
+	err = req.ReadEntity(newnetblock)
 	if err != nil {
 		res.WriteErrorString(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// ensure created isn't set (users can never set this data)
-	filterClass(newclass)
+	filterNetblock(newnetblock)
 
-	ce.Model.StoreClass(newclass)
+	err = nbe.Model.StoreNetblock(newnetblock)
+	if err != nil {
+		res.WriteError(http.StatusInternalServerError, err)
+	}
+
 	res.WriteHeader(http.StatusCreated)
-	res.WriteEntity(newclass)
+	res.WriteEntity(newnetblock)
 }
 
 func validateCreateRequest(req *restful.Request) error {
@@ -115,14 +119,14 @@ func validateCreateRequest(req *restful.Request) error {
 	return nil
 }
 
-func (ce *classEndpoint) removeClass(req *restful.Request, res *restful.Response) {
+func (nbe *netblockEndpoint) removeNetblock(req *restful.Request, res *restful.Response) {
 	err := validateDeleteRequest(req)
 	if err != nil {
 		res.WriteError(http.StatusBadRequest, err)
 		return
 	}
 
-	err = ce.Model.DeleteClassByUUID(req.PathParameter(param_name))
+	err = nbe.Model.DeleteNetblockByUUID(req.PathParameter(param_name))
 	if err != nil {
 		//error from model
 		res.WriteError(http.StatusNotFound, err)

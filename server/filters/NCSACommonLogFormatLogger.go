@@ -1,10 +1,10 @@
 package filters
 
 import (
-  "github.com/emicklei/go-restful"
-  "strings"
-  "time"
-  "log"
+	"github.com/emicklei/go-restful"
+	"log"
+	"strings"
+	"time"
 )
 
 func NCSACommonLogFormatLogger(logger *log.Logger) restful.FilterFunction {

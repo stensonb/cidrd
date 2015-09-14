@@ -1,15 +1,16 @@
 package controller
 
 import (
+	"github.com/emicklei/go-restful"
 	"log"
-  "github.com/emicklei/go-restful"
 
 	"github.com/stensonb/cidrd/config"
 	"github.com/stensonb/cidrd/model"
 
-  // the controller endpoints
-	"github.com/stensonb/cidrd/controller/plugin"
+	// the controller endpoints
 	_ "github.com/stensonb/cidrd/controller/class"
+	_ "github.com/stensonb/cidrd/controller/netblock"
+	"github.com/stensonb/cidrd/controller/plugin"
 )
 
 // Controller contains the HTTP controller with all necessary dependencies
